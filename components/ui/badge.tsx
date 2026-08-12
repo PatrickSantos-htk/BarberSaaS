@@ -13,6 +13,7 @@ const badgeVariants = cva(
         confirmed: "bg-status-confirmed-bg text-status-confirmed border border-status-confirmed/30",
         completed: "bg-status-completed-bg text-status-completed border border-status-completed/30",
         canceled: "bg-status-canceled-bg text-status-canceled border border-status-canceled/30",
+        paid: "bg-status-paid-bg text-status-paid border border-status-paid/30",
       },
     },
     defaultVariants: {
@@ -25,12 +26,13 @@ interface BadgeProps
   extends React.HTMLAttributes<HTMLSpanElement>,
     VariantProps<typeof badgeVariants> {
   dotClassName?: string;
+  icon?: React.ReactNode;
 }
 
-function Badge({ className, variant, dotClassName, children, ...props }: BadgeProps) {
+function Badge({ className, variant, dotClassName, icon, children, ...props }: BadgeProps) {
   return (
     <span className={cn(badgeVariants({ variant, className }))} {...props}>
-      <span className={cn("h-1.5 w-1.5 rounded-full bg-current", dotClassName)} aria-hidden="true" />
+      {icon ?? <span className={cn("h-1.5 w-1.5 rounded-full bg-current", dotClassName)} aria-hidden="true" />}
       {children}
     </span>
   );

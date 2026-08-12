@@ -13,7 +13,7 @@ type ViewMode = "day" | "week";
 
 export default function AgendaPage() {
   const today = todayISO();
-  const [viewMode, setViewMode] = useState<ViewMode>("day");
+  const [viewMode, setViewMode] = useState<ViewMode>("week");
   const [selectedDate, setSelectedDate] = useState(today);
   const [newOpen, setNewOpen] = useState(false);
 

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { KpiCard } from "@/components/dashboard/kpi-card";
 import { TodaySummary } from "@/components/dashboard/today-summary";
 import { DuePaymentsBanner } from "@/components/dashboard/due-payments-banner";
+import { PendingRequestsBanner } from "@/components/dashboard/pending-requests-banner";
 import { TrialBanner } from "@/components/dashboard/trial-banner";
 import { TopServices, type TopServiceRow } from "@/components/dashboard/top-services";
 import { VipClientsTable, type VipClientRow } from "@/components/dashboard/vip-clients-table";
@@ -13,23 +14,8 @@ import { useAppointments, useAppointmentsByDate } from "@/lib/data/appointments"
 import { useClients } from "@/lib/data/clients";
 import { useExpenses } from "@/lib/data/expenses";
 import { useServices } from "@/lib/data/services";
-import type { Appointment, Expense } from "@/lib/types";
+import { deltaPct, monthStats } from "@/lib/finance";
 import { addMonths, currentMonthKey, formatCurrencyBRL, formatMonthLabelPT, monthKeyOf, todayISO } from "@/lib/utils";
-
-function monthStats(monthAppointments: Appointment[], monthExpenses: Expense[]) {
-  const paid = monthAppointments.filter((a) => a.paymentStatus === "PAID");
-  const grossRevenue = paid.reduce((total, a) => total + a.price, 0);
-  const netProfit = grossRevenue - monthExpenses.reduce((total, e) => total + e.amount, 0);
-  const canceledCount = monthAppointments.filter((a) => a.status === "CANCELED").length;
-  const faultRate = monthAppointments.length > 0 ? (canceledCount / monthAppointments.length) * 100 : 0;
-  const avgTicket = paid.length > 0 ? grossRevenue / paid.length : 0;
-  return { grossRevenue, netProfit, faultRate, avgTicket };
-}
-
-function deltaPct(current: number, previous: number): number | null {
-  if (previous === 0) return current === 0 ? 0 : null;
-  return ((current - previous) / Math.abs(previous)) * 100;
-}
 
 export default function DashboardPage() {
   const appointments = useAppointments();
@@ -97,6 +83,7 @@ export default function DashboardPage() {
   return (
     <div className="mx-auto max-w-5xl space-y-8">
       <TrialBanner />
+      <PendingRequestsBanner />
       <DuePaymentsBanner />
       <TodaySummary appointments={todayAppointments} clients={clients} services={services} />
 

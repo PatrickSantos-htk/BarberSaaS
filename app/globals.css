@@ -19,10 +19,12 @@
   --status-pending-bg: rgba(150, 101, 15, 0.12);
   --status-confirmed: #3c6b3c;
   --status-confirmed-bg: rgba(60, 107, 60, 0.12);
-  --status-completed: #6a4f89;
-  --status-completed-bg: rgba(106, 79, 137, 0.12);
+  --status-completed: #2f5b96;
+  --status-completed-bg: rgba(47, 91, 150, 0.12);
   --status-canceled: #963527;
   --status-canceled-bg: rgba(150, 53, 39, 0.12);
+  --status-paid: #2f6b74;
+  --status-paid-bg: rgba(47, 107, 116, 0.12);
 
   --destructive: #963527;
   --destructive-foreground: #fafaf9;
@@ -47,10 +49,12 @@
   --status-pending-bg: rgba(201, 138, 43, 0.14);
   --status-confirmed: #5b8c5a;
   --status-confirmed-bg: rgba(91, 140, 90, 0.14);
-  --status-completed: #8c6fa8;
-  --status-completed-bg: rgba(140, 111, 168, 0.14);
+  --status-completed: #5b86c9;
+  --status-completed-bg: rgba(91, 134, 201, 0.14);
   --status-canceled: #b2503f;
   --status-canceled-bg: rgba(178, 80, 63, 0.14);
+  --status-paid: #4a8a93;
+  --status-paid-bg: rgba(74, 138, 147, 0.16);
 
   --destructive: #b2503f;
   --destructive-foreground: #f4f4f3;
@@ -78,6 +82,8 @@
   --color-status-completed-bg: var(--status-completed-bg);
   --color-status-canceled: var(--status-canceled);
   --color-status-canceled-bg: var(--status-canceled-bg);
+  --color-status-paid: var(--status-paid);
+  --color-status-paid-bg: var(--status-paid-bg);
 
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);

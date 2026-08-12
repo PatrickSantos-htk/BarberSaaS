@@ -10,6 +10,9 @@ interface Profile {
   cpfCnpj: string | null;
   subscriptionStatus: SubscriptionStatus;
   trialEndsAt: string | null;
+  slug: string | null;
+  businessHoursStart: string;
+  businessHoursEnd: string;
 }
 
 interface AuthState extends Omit<Profile, "userId" | "email"> {
@@ -21,6 +24,8 @@ interface AuthState extends Omit<Profile, "userId" | "email"> {
   setPixKey: (pixKey: string) => void;
   setCpfCnpj: (cpfCnpj: string) => void;
   setSubscriptionStatus: (status: SubscriptionStatus) => void;
+  setSlug: (slug: string) => void;
+  setBusinessHours: (start: string, end: string) => void;
   clear: () => void;
 }
 
@@ -33,6 +38,9 @@ const initialState = {
   cpfCnpj: null,
   subscriptionStatus: "trial" as SubscriptionStatus,
   trialEndsAt: null,
+  slug: null,
+  businessHoursStart: "09:00",
+  businessHoursEnd: "19:00",
 };
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -42,5 +50,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   setPixKey: (pixKey) => set({ pixKey }),
   setCpfCnpj: (cpfCnpj) => set({ cpfCnpj }),
   setSubscriptionStatus: (subscriptionStatus) => set({ subscriptionStatus }),
+  setSlug: (slug) => set({ slug }),
+  setBusinessHours: (businessHoursStart, businessHoursEnd) =>
+    set({ businessHoursStart, businessHoursEnd }),
   clear: () => set(initialState),
 }));

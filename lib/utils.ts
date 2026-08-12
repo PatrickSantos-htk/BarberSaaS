@@ -110,3 +110,8 @@ export function formatMonthLabelPT(monthKey: string) {
   const [year, month] = monthKey.split("-").map(Number);
   return `${MONTHS_PT[month - 1]} de ${year}`;
 }
+
+export function formatMonthShortPT(monthKey: string) {
+  const [year, month] = monthKey.split("-").map(Number);
+  return `${MONTHS_PT[month - 1].slice(0, 3)}/${String(year).slice(2)}`;
+}

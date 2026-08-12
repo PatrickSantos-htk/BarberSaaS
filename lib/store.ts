@@ -25,6 +25,7 @@ interface AppState {
 
   addAppointment: (appointment: Appointment) => void;
   replaceAppointment: (id: string, appointment: Appointment) => void;
+  removeAppointmentLocal: (id: string) => void;
 
   addExpense: (expense: Expense) => void;
   removeExpenseLocal: (id: string) => void;
@@ -57,6 +58,8 @@ export const useAppStore = create<AppState>((set) => ({
     set((state) => ({
       appointments: state.appointments.map((a) => (a.id === id ? appointment : a)),
     })),
+  removeAppointmentLocal: (id) =>
+    set((state) => ({ appointments: state.appointments.filter((a) => a.id !== id) })),
 
   addExpense: (expense) => set((state) => ({ expenses: [...state.expenses, expense] })),
   removeExpenseLocal: (id) =>

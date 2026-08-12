@@ -89,3 +89,9 @@ export async function markAppointmentPaid(id: string, method: PaymentMethod) {
   if (error) throw error;
   useAppStore.getState().replaceAppointment(id, mapRow(data as AppointmentRow));
 }
+
+export async function deleteAppointment(id: string) {
+  const { error } = await supabase.from("appointments").delete().eq("id", id);
+  if (error) throw error;
+  useAppStore.getState().removeAppointmentLocal(id);
+}
