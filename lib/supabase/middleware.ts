@@ -29,7 +29,12 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isPublicPath = PUBLIC_PATHS.some((path) => request.nextUrl.pathname.startsWith(path));
+  // Rotas de API cuidam da própria autenticação e devem responder com JSON
+  // (401, etc.), nunca com um redirect HTML pro /login — isso é essencial
+  // pro webhook da Asaas, que chama a rota sem nenhuma sessão de usuário.
+  const isApiPath = request.nextUrl.pathname.startsWith("/api/");
+  const isPublicPath =
+    isApiPath || PUBLIC_PATHS.some((path) => request.nextUrl.pathname.startsWith(path));
 
   if (!user && !isPublicPath) {
     const url = request.nextUrl.clone();
