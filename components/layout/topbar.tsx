@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LogOut, Scissors } from "lucide-react";
+import { LogOut, Scissors, Settings } from "lucide-react";
 import { navItems } from "@/components/layout/nav-items";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { signOut } from "@/lib/auth/actions";
 import { formatDayMonthPT, formatTimeBR, formatWeekdayShortPT, todayISO } from "@/lib/utils";
 
@@ -42,6 +43,13 @@ function Topbar() {
           {formatWeekdayShortPT(today)}, {formatDayMonthPT(today)}
           {time ? <span className="tabular-nums"> · {time}</span> : null}
         </p>
+        <Link
+          href="/configuracoes"
+          aria-label="Configurações"
+          className={buttonVariants({ variant: "ghost", size: "icon" })}
+        >
+          <Settings className="h-4 w-4" />
+        </Link>
         <ThemeToggle />
         <Button
           variant="ghost"

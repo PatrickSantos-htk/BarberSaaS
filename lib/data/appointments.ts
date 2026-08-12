@@ -13,6 +13,7 @@ interface AppointmentRow {
   status: AppointmentStatus;
   payment_status: Appointment["paymentStatus"];
   payment_method: PaymentMethod | null;
+  payment_due_date: string | null;
 }
 
 function mapRow(row: AppointmentRow): Appointment {
@@ -26,6 +27,7 @@ function mapRow(row: AppointmentRow): Appointment {
     status: row.status,
     paymentStatus: row.payment_status,
     paymentMethod: row.payment_method,
+    paymentDueDate: row.payment_due_date,
   };
 }
 
@@ -58,6 +60,7 @@ export async function createAppointment(
       date: input.date,
       time: input.time,
       price: input.price,
+      payment_due_date: input.paymentDueDate,
     })
     .select()
     .single();

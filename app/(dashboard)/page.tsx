@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, Receipt, TrendingDown, TrendingUp, UserX, Wa
 import { Button } from "@/components/ui/button";
 import { KpiCard } from "@/components/dashboard/kpi-card";
 import { TodaySummary } from "@/components/dashboard/today-summary";
+import { DuePaymentsBanner } from "@/components/dashboard/due-payments-banner";
 import { TopServices, type TopServiceRow } from "@/components/dashboard/top-services";
 import { VipClientsTable, type VipClientRow } from "@/components/dashboard/vip-clients-table";
 import { useAppointments, useAppointmentsByDate } from "@/lib/data/appointments";
@@ -94,6 +95,7 @@ export default function DashboardPage() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-8">
+      <DuePaymentsBanner />
       <TodaySummary appointments={todayAppointments} clients={clients} services={services} />
 
       <div className="flex items-center justify-between gap-3">

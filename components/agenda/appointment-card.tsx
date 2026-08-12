@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { MessageCircle, Wallet } from "lucide-react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { AppointmentStatusBadge, PaymentStatusBadge } from "@/components/agenda/status-badge";
 import { ConfirmPaymentModal } from "@/components/agenda/confirm-payment-modal";
 import { useClient } from "@/lib/data/clients";
 import { useService } from "@/lib/data/services";
 import { updateAppointmentStatus } from "@/lib/data/appointments";
+import { useAuthStore } from "@/lib/auth/store";
+import { buildPaymentChargeMessage, buildWhatsAppLink } from "@/lib/whatsapp";
 import type { Appointment, AppointmentStatus } from "@/lib/types";
 import { cn, formatCurrencyBRL } from "@/lib/utils";
 
@@ -22,14 +24,19 @@ const STATUS_ACCENT: Record<Appointment["status"], string> = {
 function AppointmentCard({ appointment }: { appointment: Appointment }) {
   const client = useClient(appointment.clientId);
   const service = useService(appointment.serviceId);
+  const pixKey = useAuthStore((state) => state.pixKey);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState(false);
 
-  function handleRequestPayment() {
-    toast.message("Envio pelo WhatsApp em breve", {
-      description: "Essa ação será conectada na Fase 4 (integração com WhatsApp).",
-    });
-  }
+  const whatsappLink = buildWhatsAppLink(
+    client?.phone ?? "",
+    buildPaymentChargeMessage({
+      clientName: client?.name ?? "cliente",
+      serviceName: service?.name ?? "serviço",
+      price: appointment.price,
+      pixKey,
+    })
+  );
 
   async function handleStatusChange(status: AppointmentStatus) {
     setUpdatingStatus(true);
@@ -88,10 +95,15 @@ function AppointmentCard({ appointment }: { appointment: Appointment }) {
           </>
         )}
         {appointment.paymentStatus === "UNPAID" && (
-          <Button size="sm" variant="ghost" onClick={handleRequestPayment}>
+          <a
+            href={whatsappLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={buttonVariants({ size: "sm", variant: "ghost" })}
+          >
             <MessageCircle className="h-4 w-4" />
             Solicitar pagamento
-          </Button>
+          </a>
         )}
         {appointment.status === "COMPLETED" && appointment.paymentStatus === "UNPAID" && (
           <Button size="sm" onClick={() => setPaymentModalOpen(true)}>

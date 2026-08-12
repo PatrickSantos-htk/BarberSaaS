@@ -27,6 +27,7 @@ export interface Appointment {
   status: AppointmentStatus;
   paymentStatus: PaymentStatus;
   paymentMethod: PaymentMethod | null;
+  paymentDueDate: string | null;
 }
 
 export interface Expense {

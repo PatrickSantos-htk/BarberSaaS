@@ -25,6 +25,7 @@ function NewAppointmentModal({ open, onOpenChange, defaultDate }: NewAppointment
   const [date, setDate] = useState(defaultDate);
   const [time, setTime] = useState("09:00");
   const [price, setPrice] = useState("");
+  const [paymentDueDate, setPaymentDueDate] = useState(defaultDate);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -35,6 +36,7 @@ function NewAppointmentModal({ open, onOpenChange, defaultDate }: NewAppointment
       setDate(defaultDate);
       setTime("09:00");
       setPrice("");
+      setPaymentDueDate(defaultDate);
       setError("");
       setSubmitting(false);
     }
@@ -59,7 +61,14 @@ function NewAppointmentModal({ open, onOpenChange, defaultDate }: NewAppointment
     setError("");
     setSubmitting(true);
     try {
-      await createAppointment({ clientId, serviceId, date, time, price: priceValue });
+      await createAppointment({
+        clientId,
+        serviceId,
+        date,
+        time,
+        price: priceValue,
+        paymentDueDate: paymentDueDate || null,
+      });
       toast.success("Agendamento criado como pendente.");
       onOpenChange(false);
     } catch {
@@ -129,15 +138,26 @@ function NewAppointmentModal({ open, onOpenChange, defaultDate }: NewAppointment
             </div>
           </div>
 
-          <div>
-            <Label htmlFor="appointment-price">Valor (R$)</Label>
-            <Input
-              id="appointment-price"
-              inputMode="decimal"
-              placeholder="40"
-              value={price}
-              onChange={(event) => setPrice(event.target.value)}
-            />
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label htmlFor="appointment-price">Valor (R$)</Label>
+              <Input
+                id="appointment-price"
+                inputMode="decimal"
+                placeholder="40"
+                value={price}
+                onChange={(event) => setPrice(event.target.value)}
+              />
+            </div>
+            <div>
+              <Label htmlFor="appointment-due-date">Vencimento do pagamento</Label>
+              <Input
+                id="appointment-due-date"
+                type="date"
+                value={paymentDueDate}
+                onChange={(event) => setPaymentDueDate(event.target.value)}
+              />
+            </div>
           </div>
 
           {error ? (
