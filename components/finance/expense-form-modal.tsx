@@ -8,7 +8,7 @@ import { Input, Label } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createExpense } from "@/lib/data/expenses";
 import { EXPENSE_CATEGORIES } from "@/lib/types";
-import { toISODate } from "@/lib/utils";
+import { todayISO } from "@/lib/utils";
 
 interface ExpenseFormModalProps {
   open: boolean;
@@ -19,29 +19,39 @@ function ExpenseFormModal({ open, onOpenChange }: ExpenseFormModalProps) {
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState<string>(EXPENSE_CATEGORIES[0]);
   const [amount, setAmount] = useState("");
-  const [date, setDate] = useState(toISODate(new Date()));
+  const [date, setDate] = useState(todayISO());
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (open) {
       setDescription("");
       setCategory(EXPENSE_CATEGORIES[0]);
       setAmount("");
-      setDate(toISODate(new Date()));
+      setDate(todayISO());
       setError("");
+      setSubmitting(false);
     }
   }, [open]);
 
-  function handleSubmit(event: FormEvent) {
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     const amountValue = Number(amount.replace(",", "."));
 
     if (!description.trim()) return setError("Descreva a despesa.");
     if (!amountValue || amountValue <= 0) return setError("Informe um valor válido.");
 
-    createExpense({ description: description.trim(), category, amount: amountValue, date });
-    toast.success("Despesa lançada.");
-    onOpenChange(false);
+    setError("");
+    setSubmitting(true);
+    try {
+      await createExpense({ description: description.trim(), category, amount: amountValue, date });
+      toast.success("Despesa lançada.");
+      onOpenChange(false);
+    } catch {
+      setError("Não foi possível salvar. Tente novamente.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -106,7 +116,9 @@ function ExpenseFormModal({ open, onOpenChange }: ExpenseFormModalProps) {
             <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
               Cancelar
             </Button>
-            <Button type="submit">Lançar despesa</Button>
+            <Button type="submit" disabled={submitting}>
+              {submitting ? "Salvando…" : "Lançar despesa"}
+            </Button>
           </div>
         </form>
       </ModalContent>

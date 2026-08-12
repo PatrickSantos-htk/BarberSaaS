@@ -25,7 +25,7 @@ function ClientList({ clients, onEdit, onDelete }: ClientListProps) {
   const appointments = useAppointments();
 
   return (
-    <ul className="divide-y divide-border rounded-md border border-border bg-surface">
+    <ul className="panel divide-y divide-border">
       {clients.map((client) => {
         const visits = appointments.filter(
           (appointment) => appointment.clientId === client.id && appointment.status === "COMPLETED"

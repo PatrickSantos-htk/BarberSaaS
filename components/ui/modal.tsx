@@ -11,13 +11,22 @@ const ModalTrigger = DialogPrimitive.Trigger;
 interface ModalContentProps extends React.ComponentProps<typeof DialogPrimitive.Content> {
   title: string;
   description?: string;
+  /** Hide the close (X) button for required, non-dismissable steps (e.g. onboarding). */
+  hideClose?: boolean;
 }
 
 /**
  * Renders as a bottom sheet on mobile and a centered dialog from `md:` up,
  * per the Editorial Premium responsive spec — one primitive, no breakpoint JS.
  */
-function ModalContent({ className, title, description, children, ...props }: ModalContentProps) {
+function ModalContent({
+  className,
+  title,
+  description,
+  hideClose,
+  children,
+  ...props
+}: ModalContentProps) {
   return (
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-[2px]" />
@@ -42,12 +51,14 @@ function ModalContent({ className, title, description, children, ...props }: Mod
               </DialogPrimitive.Description>
             ) : null}
           </div>
-          <DialogPrimitive.Close
-            className="shrink-0 rounded-sm p-1 text-muted hover:bg-surface hover:text-foreground"
-            aria-label="Fechar"
-          >
-            <X className="h-4 w-4" />
-          </DialogPrimitive.Close>
+          {hideClose ? null : (
+            <DialogPrimitive.Close
+              className="shrink-0 rounded-sm p-1 text-muted hover:bg-surface hover:text-foreground"
+              aria-label="Fechar"
+            >
+              <X className="h-4 w-4" />
+            </DialogPrimitive.Close>
+          )}
         </div>
         <div className="overflow-y-auto p-5">{children}</div>
       </DialogPrimitive.Content>

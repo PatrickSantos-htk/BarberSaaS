@@ -33,11 +33,11 @@ export default function ClientesPage() {
     setFormOpen(true);
   }
 
-  function handleSubmit(input: { name: string; phone: string; email: string }) {
+  async function handleSubmit(input: { name: string; phone: string; email: string }) {
     if (editing) {
-      updateClient(editing.id, input);
+      await updateClient(editing.id, input);
     } else {
-      createClient(input);
+      await createClient(input);
     }
   }
 
@@ -97,10 +97,13 @@ export default function ClientesPage() {
         onOpenChange={(open) => !open && setDeleting(undefined)}
         title={`Excluir "${deleting?.name}"?`}
         confirmLabel="Excluir"
-        onConfirm={() => {
-          if (deleting) {
-            deleteClient(deleting.id);
+        onConfirm={async () => {
+          if (!deleting) return;
+          try {
+            await deleteClient(deleting.id);
             toast.success("Cliente excluído.");
+          } catch {
+            toast.error("Não foi possível excluir o cliente.");
           }
         }}
       />

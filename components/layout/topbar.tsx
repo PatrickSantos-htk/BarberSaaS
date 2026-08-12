@@ -1,15 +1,30 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Scissors } from "lucide-react";
+import { LogOut, Scissors } from "lucide-react";
 import { navItems } from "@/components/layout/nav-items";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
-import { formatDayMonthPT, formatWeekdayShortPT, toISODate } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { signOut } from "@/lib/auth/actions";
+import { formatDayMonthPT, formatTimeBR, formatWeekdayShortPT, todayISO } from "@/lib/utils";
 
 function Topbar() {
   const pathname = usePathname();
   const current = navItems.find((item) => item.href === pathname);
-  const today = toISODate(new Date());
+  const today = todayISO();
+  const [time, setTime] = useState<string | null>(null);
+
+  useEffect(() => {
+    setTime(formatTimeBR());
+    const interval = setInterval(() => setTime(formatTimeBR()), 15_000);
+    return () => clearInterval(interval);
+  }, []);
+
+  async function handleSignOut() {
+    await signOut();
+    window.location.href = "/login";
+  }
 
   return (
     <header className="flex items-center justify-between border-b border-border bg-surface px-4 py-4 md:px-8">
@@ -25,8 +40,18 @@ function Topbar() {
       <div className="flex items-center gap-3">
         <p className="hidden text-sm capitalize text-muted sm:block">
           {formatWeekdayShortPT(today)}, {formatDayMonthPT(today)}
+          {time ? <span className="tabular-nums"> · {time}</span> : null}
         </p>
         <ThemeToggle />
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Sair da conta"
+          className="md:hidden"
+          onClick={handleSignOut}
+        >
+          <LogOut className="h-4 w-4" />
+        </Button>
       </div>
     </header>
   );

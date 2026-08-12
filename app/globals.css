@@ -2,11 +2,11 @@
 
 /* Light theme (default) — neutral white/gray, no brown bias. */
 :root {
-  --background: #fafaf9;
+  --background: #eeeeec;
   --surface: #ffffff;
-  --surface-raised: #f4f4f3;
-  --border: #e4e3e0;
-  --border-strong: #cbcac6;
+  --surface-raised: #f7f7f6;
+  --border: #dddcd8;
+  --border-strong: #c2c1bc;
   --foreground: #181816;
   --muted: #5b5a55;
   --muted-foreground: #8a8983;
@@ -105,6 +105,13 @@ body {
   background: var(--background);
   color: var(--foreground);
   transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.panel {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
 ::selection {

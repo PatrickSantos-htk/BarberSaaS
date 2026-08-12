@@ -46,6 +46,29 @@ export function toISODate(date: Date) {
   return `${year}-${month}-${day}`;
 }
 
+const BRASILIA_TZ = "America/Sao_Paulo";
+
+/**
+ * A Date whose getFullYear/getMonth/getDate/getHours read as Brasília wall-clock
+ * time, regardless of the browser/server's own timezone. Barbershop hours and
+ * "today" must always mean Brasília's today, not the visitor's or host's.
+ */
+export function nowInBrasilia() {
+  return new Date(new Date().toLocaleString("en-US", { timeZone: BRASILIA_TZ }));
+}
+
+export function todayISO() {
+  return toISODate(nowInBrasilia());
+}
+
+export function formatTimeBR() {
+  return new Date().toLocaleTimeString("pt-BR", {
+    timeZone: BRASILIA_TZ,
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 export function formatWeekdayShortPT(isoDate: string) {
   const date = new Date(`${isoDate}T00:00:00`);
   return WEEKDAYS_PT[date.getDay()];
@@ -70,7 +93,7 @@ export function startOfWeek(isoDate: string) {
 }
 
 export function currentMonthKey() {
-  return toISODate(new Date()).slice(0, 7);
+  return todayISO().slice(0, 7);
 }
 
 export function monthKeyOf(isoDate: string) {

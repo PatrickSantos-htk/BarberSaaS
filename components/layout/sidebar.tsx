@@ -2,12 +2,20 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Scissors } from "lucide-react";
+import { LogOut, Scissors } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { navItems } from "@/components/layout/nav-items";
+import { useAuthStore } from "@/lib/auth/store";
+import { signOut } from "@/lib/auth/actions";
 
 function Sidebar() {
   const pathname = usePathname();
+  const shopName = useAuthStore((state) => state.shopName);
+
+  async function handleSignOut() {
+    await signOut();
+    window.location.href = "/login";
+  }
 
   return (
     <aside className="hidden w-60 shrink-0 flex-col border-r border-border bg-surface md:flex">
@@ -38,8 +46,16 @@ function Sidebar() {
           );
         })}
       </nav>
-      <div className="border-t border-border p-4 text-xs text-muted-foreground">
-        BarberSaaS · versão inicial
+      <div className="flex items-center justify-between gap-2 border-t border-border p-4">
+        <p className="truncate text-xs font-medium text-foreground">{shopName ?? "Carregando…"}</p>
+        <button
+          type="button"
+          onClick={handleSignOut}
+          aria-label="Sair da conta"
+          className="shrink-0 rounded-sm p-1.5 text-muted hover:bg-surface-raised hover:text-foreground"
+        >
+          <LogOut className="h-4 w-4" />
+        </button>
       </div>
     </aside>
   );

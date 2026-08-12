@@ -11,7 +11,7 @@ interface ServiceFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   service?: Service;
-  onSubmit: (input: { name: string; price: number; durationMinutes: number }) => void;
+  onSubmit: (input: { name: string; price: number; durationMinutes: number }) => Promise<void>;
 }
 
 function ServiceFormModal({ open, onOpenChange, service, onSubmit }: ServiceFormModalProps) {
@@ -19,6 +19,7 @@ function ServiceFormModal({ open, onOpenChange, service, onSubmit }: ServiceForm
   const [price, setPrice] = useState("");
   const [duration, setDuration] = useState("");
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -26,10 +27,11 @@ function ServiceFormModal({ open, onOpenChange, service, onSubmit }: ServiceForm
       setPrice(service ? String(service.price) : "");
       setDuration(service ? String(service.durationMinutes) : "");
       setError("");
+      setSubmitting(false);
     }
   }, [open, service]);
 
-  function handleSubmit(event: FormEvent) {
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     const priceValue = Number(price.replace(",", "."));
     const durationValue = Number(duration);
@@ -38,9 +40,17 @@ function ServiceFormModal({ open, onOpenChange, service, onSubmit }: ServiceForm
     if (!priceValue || priceValue <= 0) return setError("Informe um valor válido.");
     if (!durationValue || durationValue <= 0) return setError("Informe uma duração válida.");
 
-    onSubmit({ name: name.trim(), price: priceValue, durationMinutes: durationValue });
-    toast.success(service ? "Serviço atualizado." : "Serviço cadastrado.");
-    onOpenChange(false);
+    setError("");
+    setSubmitting(true);
+    try {
+      await onSubmit({ name: name.trim(), price: priceValue, durationMinutes: durationValue });
+      toast.success(service ? "Serviço atualizado." : "Serviço cadastrado.");
+      onOpenChange(false);
+    } catch {
+      setError("Não foi possível salvar. Tente novamente.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -90,7 +100,9 @@ function ServiceFormModal({ open, onOpenChange, service, onSubmit }: ServiceForm
             <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
               Cancelar
             </Button>
-            <Button type="submit">{service ? "Salvar alterações" : "Cadastrar serviço"}</Button>
+            <Button type="submit" disabled={submitting}>
+              {submitting ? "Salvando…" : service ? "Salvar alterações" : "Cadastrar serviço"}
+            </Button>
           </div>
         </form>
       </ModalContent>

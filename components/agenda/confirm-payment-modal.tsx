@@ -18,11 +18,21 @@ interface ConfirmPaymentModalProps {
 
 function ConfirmPaymentModal({ open, onOpenChange, appointment }: ConfirmPaymentModalProps) {
   const [method, setMethod] = useState<PaymentMethod>("PIX");
+  const [submitting, setSubmitting] = useState(false);
 
-  function handleConfirm() {
-    markAppointmentPaid(appointment.id, method);
-    toast.success(`Pagamento de ${formatCurrencyBRL(appointment.price)} confirmado via ${PAYMENT_METHOD_LABEL[method]}.`);
-    onOpenChange(false);
+  async function handleConfirm() {
+    setSubmitting(true);
+    try {
+      await markAppointmentPaid(appointment.id, method);
+      toast.success(
+        `Pagamento de ${formatCurrencyBRL(appointment.price)} confirmado via ${PAYMENT_METHOD_LABEL[method]}.`
+      );
+      onOpenChange(false);
+    } catch {
+      toast.error("Não foi possível confirmar o pagamento.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -55,10 +65,12 @@ function ConfirmPaymentModal({ open, onOpenChange, appointment }: ConfirmPayment
             </div>
           </div>
           <div className="flex items-center justify-end gap-2 pt-2">
-            <Button variant="ghost" onClick={() => onOpenChange(false)}>
+            <Button variant="ghost" disabled={submitting} onClick={() => onOpenChange(false)}>
               Cancelar
             </Button>
-            <Button onClick={handleConfirm}>Confirmar pagamento</Button>
+            <Button onClick={handleConfirm} disabled={submitting}>
+              {submitting ? "Confirmando…" : "Confirmar pagamento"}
+            </Button>
           </div>
         </div>
       </ModalContent>

@@ -15,7 +15,7 @@ function ExpenseList({ expenses, onDelete }: ExpenseListProps) {
   const sorted = expenses.slice().sort((a, b) => b.date.localeCompare(a.date));
 
   return (
-    <ul className="divide-y divide-border rounded-md border border-border bg-surface">
+    <ul className="panel divide-y divide-border">
       {sorted.map((expense) => (
         <li key={expense.id} className="flex items-center gap-4 px-5 py-4">
           <div className="min-w-0 flex-1">

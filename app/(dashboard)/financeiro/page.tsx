@@ -51,10 +51,13 @@ export default function FinanceiroPage() {
         onOpenChange={(open) => !open && setDeleting(undefined)}
         title="Excluir despesa?"
         confirmLabel="Excluir"
-        onConfirm={() => {
-          if (deleting) {
-            deleteExpense(deleting.id);
+        onConfirm={async () => {
+          if (!deleting) return;
+          try {
+            await deleteExpense(deleting.id);
             toast.success("Despesa excluída.");
+          } catch {
+            toast.error("Não foi possível excluir a despesa.");
           }
         }}
       />

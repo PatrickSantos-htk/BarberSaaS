@@ -13,7 +13,7 @@ interface ServiceListProps {
 
 function ServiceList({ services, onEdit, onDelete }: ServiceListProps) {
   return (
-    <ul className="divide-y divide-border rounded-md border border-border bg-surface">
+    <ul className="panel divide-y divide-border">
       {services.map((service) => (
         <li key={service.id} className="flex items-center gap-4 px-5 py-4">
           <div className="min-w-0 flex-1">

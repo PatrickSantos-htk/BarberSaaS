@@ -51,7 +51,7 @@ function PendingPayments() {
   }
 
   return (
-    <ul className="divide-y divide-border rounded-md border border-border bg-surface">
+    <ul className="panel divide-y divide-border">
       {pending.map((appointment) => (
         <PendingPaymentRow key={appointment.id} appointment={appointment} />
       ))}

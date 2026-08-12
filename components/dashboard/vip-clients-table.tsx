@@ -21,7 +21,7 @@ function VipClientsTable({ rows }: { rows: VipClientRow[] }) {
   }
 
   return (
-    <div className="overflow-hidden rounded-md border border-border bg-surface">
+    <div className="panel overflow-hidden">
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted">

@@ -9,7 +9,7 @@ import { ConfirmPaymentModal } from "@/components/agenda/confirm-payment-modal";
 import { useClient } from "@/lib/data/clients";
 import { useService } from "@/lib/data/services";
 import { updateAppointmentStatus } from "@/lib/data/appointments";
-import type { Appointment } from "@/lib/types";
+import type { Appointment, AppointmentStatus } from "@/lib/types";
 import { cn, formatCurrencyBRL } from "@/lib/utils";
 
 const STATUS_ACCENT: Record<Appointment["status"], string> = {
@@ -23,6 +23,7 @@ function AppointmentCard({ appointment }: { appointment: Appointment }) {
   const client = useClient(appointment.clientId);
   const service = useService(appointment.serviceId);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [updatingStatus, setUpdatingStatus] = useState(false);
 
   function handleRequestPayment() {
     toast.message("Envio pelo WhatsApp em breve", {
@@ -30,10 +31,21 @@ function AppointmentCard({ appointment }: { appointment: Appointment }) {
     });
   }
 
+  async function handleStatusChange(status: AppointmentStatus) {
+    setUpdatingStatus(true);
+    try {
+      await updateAppointmentStatus(appointment.id, status);
+    } catch {
+      toast.error("Não foi possível atualizar o status.");
+    } finally {
+      setUpdatingStatus(false);
+    }
+  }
+
   return (
     <div
       className={cn(
-        "flex flex-col gap-3 rounded-md border border-border border-l-4 bg-surface p-4 sm:flex-row sm:items-center",
+        "flex flex-col gap-3 rounded-md border border-border border-l-4 bg-surface p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.04)] sm:flex-row sm:items-center",
         STATUS_ACCENT[appointment.status]
       )}
     >
@@ -57,20 +69,20 @@ function AppointmentCard({ appointment }: { appointment: Appointment }) {
       <div className="flex shrink-0 flex-wrap items-center gap-2">
         {appointment.status === "PENDING" && (
           <>
-            <Button size="sm" variant="outline" onClick={() => updateAppointmentStatus(appointment.id, "CONFIRMED")}>
+            <Button size="sm" variant="outline" disabled={updatingStatus} onClick={() => handleStatusChange("CONFIRMED")}>
               Confirmar
             </Button>
-            <Button size="sm" variant="ghost" onClick={() => updateAppointmentStatus(appointment.id, "CANCELED")}>
+            <Button size="sm" variant="ghost" disabled={updatingStatus} onClick={() => handleStatusChange("CANCELED")}>
               Cancelar
             </Button>
           </>
         )}
         {appointment.status === "CONFIRMED" && (
           <>
-            <Button size="sm" variant="outline" onClick={() => updateAppointmentStatus(appointment.id, "COMPLETED")}>
+            <Button size="sm" variant="outline" disabled={updatingStatus} onClick={() => handleStatusChange("COMPLETED")}>
               Concluir
             </Button>
-            <Button size="sm" variant="ghost" onClick={() => updateAppointmentStatus(appointment.id, "CANCELED")}>
+            <Button size="sm" variant="ghost" disabled={updatingStatus} onClick={() => handleStatusChange("CANCELED")}>
               Cancelar
             </Button>
           </>

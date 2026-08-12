@@ -24,7 +24,7 @@ function WeekDayColumn({
   const appointments = useAppointmentsByDate(date).slice().sort((a, b) => a.time.localeCompare(b.time));
 
   return (
-    <div className="flex min-w-0 flex-col rounded-md border border-border bg-surface">
+    <div className="panel flex min-w-0 flex-col">
       <button
         type="button"
         onClick={() => onSelectDay(date)}

@@ -26,6 +26,7 @@ function NewAppointmentModal({ open, onOpenChange, defaultDate }: NewAppointment
   const [time, setTime] = useState("09:00");
   const [price, setPrice] = useState("");
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -35,6 +36,7 @@ function NewAppointmentModal({ open, onOpenChange, defaultDate }: NewAppointment
       setTime("09:00");
       setPrice("");
       setError("");
+      setSubmitting(false);
     }
   }, [open, defaultDate]);
 
@@ -44,7 +46,7 @@ function NewAppointmentModal({ open, onOpenChange, defaultDate }: NewAppointment
     if (service) setPrice(String(service.price));
   }
 
-  function handleSubmit(event: FormEvent) {
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     const priceValue = Number(price.replace(",", "."));
 
@@ -54,9 +56,17 @@ function NewAppointmentModal({ open, onOpenChange, defaultDate }: NewAppointment
     if (!time) return setError("Selecione o horário.");
     if (!priceValue || priceValue <= 0) return setError("Informe um valor válido.");
 
-    createAppointment({ clientId, serviceId, date, time, price: priceValue });
-    toast.success("Agendamento criado como pendente.");
-    onOpenChange(false);
+    setError("");
+    setSubmitting(true);
+    try {
+      await createAppointment({ clientId, serviceId, date, time, price: priceValue });
+      toast.success("Agendamento criado como pendente.");
+      onOpenChange(false);
+    } catch {
+      setError("Não foi possível criar o agendamento. Tente novamente.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -140,7 +150,9 @@ function NewAppointmentModal({ open, onOpenChange, defaultDate }: NewAppointment
             <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
               Cancelar
             </Button>
-            <Button type="submit">Criar agendamento</Button>
+            <Button type="submit" disabled={submitting}>
+              {submitting ? "Criando…" : "Criar agendamento"}
+            </Button>
           </div>
         </form>
       </ModalContent>

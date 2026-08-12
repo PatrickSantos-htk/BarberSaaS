@@ -27,11 +27,11 @@ export default function ServicosPage() {
     setFormOpen(true);
   }
 
-  function handleSubmit(input: { name: string; price: number; durationMinutes: number }) {
+  async function handleSubmit(input: { name: string; price: number; durationMinutes: number }) {
     if (editing) {
-      updateService(editing.id, input);
+      await updateService(editing.id, input);
     } else {
-      createService(input);
+      await createService(input);
     }
   }
 
@@ -75,10 +75,13 @@ export default function ServicosPage() {
         onOpenChange={(open) => !open && setDeleting(undefined)}
         title={`Excluir "${deleting?.name}"?`}
         confirmLabel="Excluir"
-        onConfirm={() => {
-          if (deleting) {
-            deleteService(deleting.id);
+        onConfirm={async () => {
+          if (!deleting) return;
+          try {
+            await deleteService(deleting.id);
             toast.success("Serviço excluído.");
+          } catch {
+            toast.error("Não foi possível excluir o serviço.");
           }
         }}
       />

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Modal, ModalContent } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 
@@ -10,7 +11,7 @@ interface ConfirmDialogProps {
   description?: string;
   confirmLabel?: string;
   destructive?: boolean;
-  onConfirm: () => void;
+  onConfirm: () => void | Promise<void>;
 }
 
 function ConfirmDialog({
@@ -22,21 +23,27 @@ function ConfirmDialog({
   destructive = true,
   onConfirm,
 }: ConfirmDialogProps) {
+  const [submitting, setSubmitting] = useState(false);
+
+  async function handleConfirm() {
+    setSubmitting(true);
+    try {
+      await onConfirm();
+      onOpenChange(false);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   return (
-    <Modal open={open} onOpenChange={onOpenChange}>
+    <Modal open={open} onOpenChange={(next) => !submitting && onOpenChange(next)}>
       <ModalContent title={title} description={description}>
         <div className="flex items-center justify-end gap-2">
-          <Button variant="ghost" onClick={() => onOpenChange(false)}>
+          <Button variant="ghost" disabled={submitting} onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
-          <Button
-            variant={destructive ? "destructive" : "primary"}
-            onClick={() => {
-              onConfirm();
-              onOpenChange(false);
-            }}
-          >
-            {confirmLabel}
+          <Button variant={destructive ? "destructive" : "primary"} disabled={submitting} onClick={handleConfirm}>
+            {submitting ? "Aguarde…" : confirmLabel}
           </Button>
         </div>
       </ModalContent>

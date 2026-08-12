@@ -1,93 +1,64 @@
 import { create } from "zustand";
-import type {
-  Appointment,
-  AppointmentStatus,
-  Client,
-  Expense,
-  PaymentMethod,
-  Service,
-} from "@/lib/types";
-import { seedAppointments, seedClients, seedExpenses, seedServices } from "@/lib/mock/seed";
-
-function generateId(prefix: string) {
-  return `${prefix}-${Math.random().toString(36).slice(2, 10)}`;
-}
+import type { Appointment, Client, Expense, Service } from "@/lib/types";
 
 interface AppState {
+  hydrated: boolean;
   clients: Client[];
   services: Service[];
   appointments: Appointment[];
   expenses: Expense[];
 
-  addClient: (input: Omit<Client, "id" | "createdAt">) => void;
-  updateClient: (id: string, input: Omit<Client, "id" | "createdAt">) => void;
-  removeClient: (id: string) => void;
+  setAll: (data: {
+    clients: Client[];
+    services: Service[];
+    appointments: Appointment[];
+    expenses: Expense[];
+  }) => void;
 
-  addService: (input: Omit<Service, "id">) => void;
-  updateService: (id: string, input: Omit<Service, "id">) => void;
-  removeService: (id: string) => void;
+  addClient: (client: Client) => void;
+  replaceClient: (id: string, client: Client) => void;
+  removeClientLocal: (id: string) => void;
 
-  addAppointment: (input: Omit<Appointment, "id" | "status" | "paymentStatus" | "paymentMethod">) => void;
-  updateAppointmentStatus: (id: string, status: AppointmentStatus) => void;
-  markAppointmentPaid: (id: string, method: PaymentMethod) => void;
+  addService: (service: Service) => void;
+  replaceService: (id: string, service: Service) => void;
+  removeServiceLocal: (id: string) => void;
 
-  addExpense: (input: Omit<Expense, "id">) => void;
-  removeExpense: (id: string) => void;
+  addAppointment: (appointment: Appointment) => void;
+  replaceAppointment: (id: string, appointment: Appointment) => void;
+
+  addExpense: (expense: Expense) => void;
+  removeExpenseLocal: (id: string) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
-  clients: seedClients,
-  services: seedServices,
-  appointments: seedAppointments,
-  expenses: seedExpenses,
+  hydrated: false,
+  clients: [],
+  services: [],
+  appointments: [],
+  expenses: [],
 
-  addClient: (input) =>
-    set((state) => ({
-      clients: [
-        ...state.clients,
-        { ...input, id: generateId("cli"), createdAt: new Date().toISOString().slice(0, 10) },
-      ],
-    })),
-  updateClient: (id, input) =>
-    set((state) => ({
-      clients: state.clients.map((client) => (client.id === id ? { ...client, ...input } : client)),
-    })),
-  removeClient: (id) =>
-    set((state) => ({ clients: state.clients.filter((client) => client.id !== id) })),
+  setAll: (data) => set({ ...data, hydrated: true }),
 
-  addService: (input) =>
-    set((state) => ({ services: [...state.services, { ...input, id: generateId("svc") }] })),
-  updateService: (id, input) =>
-    set((state) => ({
-      services: state.services.map((service) => (service.id === id ? { ...service, ...input } : service)),
-    })),
-  removeService: (id) =>
-    set((state) => ({ services: state.services.filter((service) => service.id !== id) })),
+  addClient: (client) => set((state) => ({ clients: [...state.clients, client] })),
+  replaceClient: (id, client) =>
+    set((state) => ({ clients: state.clients.map((c) => (c.id === id ? client : c)) })),
+  removeClientLocal: (id) =>
+    set((state) => ({ clients: state.clients.filter((c) => c.id !== id) })),
 
-  addAppointment: (input) =>
+  addService: (service) => set((state) => ({ services: [...state.services, service] })),
+  replaceService: (id, service) =>
+    set((state) => ({ services: state.services.map((s) => (s.id === id ? service : s)) })),
+  removeServiceLocal: (id) =>
+    set((state) => ({ services: state.services.filter((s) => s.id !== id) })),
+
+  addAppointment: (appointment) =>
+    set((state) => ({ appointments: [...state.appointments, appointment] })),
+  replaceAppointment: (id, appointment) =>
     set((state) => ({
-      appointments: [
-        ...state.appointments,
-        { ...input, id: generateId("apt"), status: "PENDING", paymentStatus: "UNPAID", paymentMethod: null },
-      ],
-    })),
-  updateAppointmentStatus: (id, status) =>
-    set((state) => ({
-      appointments: state.appointments.map((appointment) =>
-        appointment.id === id ? { ...appointment, status } : appointment
-      ),
-    })),
-  markAppointmentPaid: (id, method) =>
-    set((state) => ({
-      appointments: state.appointments.map((appointment) =>
-        appointment.id === id
-          ? { ...appointment, paymentStatus: "PAID", paymentMethod: method }
-          : appointment
-      ),
+      appointments: state.appointments.map((a) => (a.id === id ? appointment : a)),
     })),
 
-  addExpense: (input) =>
-    set((state) => ({ expenses: [...state.expenses, { ...input, id: generateId("exp") }] })),
-  removeExpense: (id) =>
-    set((state) => ({ expenses: state.expenses.filter((expense) => expense.id !== id) })),
+  addExpense: (expense) => set((state) => ({ expenses: [...state.expenses, expense] })),
+  removeExpenseLocal: (id) =>
+    set((state) => ({ expenses: state.expenses.filter((e) => e.id !== id) })),
 }));

@@ -12,7 +12,7 @@ interface ClientFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   client?: Client;
-  onSubmit: (input: { name: string; phone: string; email: string }) => void;
+  onSubmit: (input: { name: string; phone: string; email: string }) => Promise<void>;
 }
 
 function ClientFormModal({ open, onOpenChange, client, onSubmit }: ClientFormModalProps) {
@@ -20,6 +20,7 @@ function ClientFormModal({ open, onOpenChange, client, onSubmit }: ClientFormMod
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -27,17 +28,26 @@ function ClientFormModal({ open, onOpenChange, client, onSubmit }: ClientFormMod
       setPhone(client?.phone ?? "");
       setEmail(client?.email ?? "");
       setError("");
+      setSubmitting(false);
     }
   }, [open, client]);
 
-  function handleSubmit(event: FormEvent) {
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     if (!name.trim()) return setError("Informe o nome do cliente.");
     if (phone.replace(/\D/g, "").length < 10) return setError("Informe um telefone com DDD válido.");
 
-    onSubmit({ name: name.trim(), phone, email: email.trim() });
-    toast.success(client ? "Cliente atualizado." : "Cliente cadastrado.");
-    onOpenChange(false);
+    setError("");
+    setSubmitting(true);
+    try {
+      await onSubmit({ name: name.trim(), phone, email: email.trim() });
+      toast.success(client ? "Cliente atualizado." : "Cliente cadastrado.");
+      onOpenChange(false);
+    } catch {
+      setError("Não foi possível salvar. Tente novamente.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -85,7 +95,9 @@ function ClientFormModal({ open, onOpenChange, client, onSubmit }: ClientFormMod
             <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
               Cancelar
             </Button>
-            <Button type="submit">{client ? "Salvar alterações" : "Cadastrar cliente"}</Button>
+            <Button type="submit" disabled={submitting}>
+              {submitting ? "Salvando…" : client ? "Salvar alterações" : "Cadastrar cliente"}
+            </Button>
           </div>
         </form>
       </ModalContent>

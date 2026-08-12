@@ -7,12 +7,12 @@ import { SegmentedControl } from "@/components/ui/segmented-control";
 import { DayView } from "@/components/agenda/day-view";
 import { WeekView } from "@/components/agenda/week-view";
 import { NewAppointmentModal } from "@/components/agenda/new-appointment-modal";
-import { addDays, formatDayMonthPT, formatWeekdayShortPT, startOfWeek, toISODate } from "@/lib/utils";
+import { addDays, formatDayMonthPT, formatWeekdayShortPT, startOfWeek, todayISO } from "@/lib/utils";
 
 type ViewMode = "day" | "week";
 
 export default function AgendaPage() {
-  const today = toISODate(new Date());
+  const today = todayISO();
   const [viewMode, setViewMode] = useState<ViewMode>("day");
   const [selectedDate, setSelectedDate] = useState(today);
   const [newOpen, setNewOpen] = useState(false);
