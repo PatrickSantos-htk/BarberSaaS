@@ -5,12 +5,14 @@ import { Topbar } from "@/components/layout/topbar";
 import { StoreHydrator } from "@/components/store-hydrator";
 import { AuthProvider } from "@/components/auth-provider";
 import { SubscriptionGate } from "@/components/subscription-gate";
+import { RealtimeSync } from "@/components/realtime-sync";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
     <AuthProvider>
       <SubscriptionGate>
         <StoreHydrator>
+          <RealtimeSync />
           <div className="flex min-h-screen w-full bg-background">
             <Sidebar />
             <div className="flex min-h-screen flex-1 flex-col">

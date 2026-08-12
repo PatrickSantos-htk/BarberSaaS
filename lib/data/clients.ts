@@ -2,7 +2,7 @@ import { supabase } from "@/lib/supabase/client";
 import { useAppStore } from "@/lib/store";
 import type { Client } from "@/lib/types";
 
-interface ClientRow {
+export interface ClientRow {
   id: string;
   name: string;
   phone: string;
@@ -10,7 +10,7 @@ interface ClientRow {
   created_at: string;
 }
 
-function mapRow(row: ClientRow): Client {
+export function mapClientRow(row: ClientRow): Client {
   return { id: row.id, name: row.name, phone: row.phone, email: row.email, createdAt: row.created_at };
 }
 
@@ -25,7 +25,7 @@ export function useClient(id: string | undefined) {
 export async function fetchClients() {
   const { data, error } = await supabase.from("clients").select("*").order("name");
   if (error) throw error;
-  return (data as ClientRow[]).map(mapRow);
+  return (data as ClientRow[]).map(mapClientRow);
 }
 
 export async function createClient(input: Omit<Client, "id" | "createdAt">) {
@@ -35,7 +35,7 @@ export async function createClient(input: Omit<Client, "id" | "createdAt">) {
     .select()
     .single();
   if (error) throw error;
-  useAppStore.getState().addClient(mapRow(data as ClientRow));
+  useAppStore.getState().addClient(mapClientRow(data as ClientRow));
 }
 
 export async function updateClient(id: string, input: Omit<Client, "id" | "createdAt">) {
@@ -46,7 +46,7 @@ export async function updateClient(id: string, input: Omit<Client, "id" | "creat
     .select()
     .single();
   if (error) throw error;
-  useAppStore.getState().replaceClient(id, mapRow(data as ClientRow));
+  useAppStore.getState().replaceClient(id, mapClientRow(data as ClientRow));
 }
 
 export async function deleteClient(id: string) {

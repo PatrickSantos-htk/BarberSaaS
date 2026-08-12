@@ -3,7 +3,7 @@ import { supabase } from "@/lib/supabase/client";
 import { useAppStore } from "@/lib/store";
 import type { Appointment, AppointmentStatus, PaymentMethod } from "@/lib/types";
 
-interface AppointmentRow {
+export interface AppointmentRow {
   id: string;
   client_id: string;
   service_id: string;
@@ -16,7 +16,7 @@ interface AppointmentRow {
   payment_due_date: string | null;
 }
 
-function mapRow(row: AppointmentRow): Appointment {
+export function mapAppointmentRow(row: AppointmentRow): Appointment {
   return {
     id: row.id,
     clientId: row.client_id,
@@ -46,7 +46,7 @@ export function useAppointmentsByDate(date: string) {
 export async function fetchAppointments() {
   const { data, error } = await supabase.from("appointments").select("*").order("date").order("time");
   if (error) throw error;
-  return (data as AppointmentRow[]).map(mapRow);
+  return (data as AppointmentRow[]).map(mapAppointmentRow);
 }
 
 export async function createAppointment(
@@ -65,7 +65,7 @@ export async function createAppointment(
     .select()
     .single();
   if (error) throw error;
-  useAppStore.getState().addAppointment(mapRow(data as AppointmentRow));
+  useAppStore.getState().addAppointment(mapAppointmentRow(data as AppointmentRow));
 }
 
 export async function updateAppointmentStatus(id: string, status: AppointmentStatus) {
@@ -76,7 +76,7 @@ export async function updateAppointmentStatus(id: string, status: AppointmentSta
     .select()
     .single();
   if (error) throw error;
-  useAppStore.getState().replaceAppointment(id, mapRow(data as AppointmentRow));
+  useAppStore.getState().replaceAppointment(id, mapAppointmentRow(data as AppointmentRow));
 }
 
 export async function markAppointmentPaid(id: string, method: PaymentMethod) {
@@ -87,7 +87,7 @@ export async function markAppointmentPaid(id: string, method: PaymentMethod) {
     .select()
     .single();
   if (error) throw error;
-  useAppStore.getState().replaceAppointment(id, mapRow(data as AppointmentRow));
+  useAppStore.getState().replaceAppointment(id, mapAppointmentRow(data as AppointmentRow));
 }
 
 export async function deleteAppointment(id: string) {
