@@ -76,7 +76,10 @@ export default function CadastroPage() {
     <Card>
       <CardHeader className="flex-col items-start">
         <CardTitle>Cadastrar barbearia</CardTitle>
-        <CardDescription>Crie sua conta para começar a usar o BarberSaaS.</CardDescription>
+        <CardDescription>
+          30 dias grátis para testar. Depois, R$ 29,90/mês para continuar usando — sem cobrança
+          durante o teste.
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <GoogleButton
