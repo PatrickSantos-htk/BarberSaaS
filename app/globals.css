@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+/* Light theme (default) — neutral white/gray, no brown bias. */
+:root {
+  --background: #fafaf9;
+  --surface: #ffffff;
+  --surface-raised: #f4f4f3;
+  --border: #e4e3e0;
+  --border-strong: #cbcac6;
+  --foreground: #181816;
+  --muted: #5b5a55;
+  --muted-foreground: #8a8983;
+
+  --accent: #2f6b74;
+  --accent-hover: #3a828c;
+  --accent-foreground: #fafaf9;
+
+  --status-pending: #96650f;
+  --status-pending-bg: rgba(150, 101, 15, 0.12);
+  --status-confirmed: #3c6b3c;
+  --status-confirmed-bg: rgba(60, 107, 60, 0.12);
+  --status-completed: #6a4f89;
+  --status-completed-bg: rgba(106, 79, 137, 0.12);
+  --status-canceled: #963527;
+  --status-canceled-bg: rgba(150, 53, 39, 0.12);
+
+  --destructive: #963527;
+  --destructive-foreground: #fafaf9;
+}
+
+/* Dark theme — neutral near-black, no brown bias. */
+:root.dark {
+  --background: #121212;
+  --surface: #191919;
+  --surface-raised: #212121;
+  --border: #2e2e2e;
+  --border-strong: #454545;
+  --foreground: #f4f4f3;
+  --muted: #a8a7a2;
+  --muted-foreground: #7d7c77;
+
+  --accent: #4a8a93;
+  --accent-hover: #5c9ea7;
+  --accent-foreground: #121212;
+
+  --status-pending: #c98a2b;
+  --status-pending-bg: rgba(201, 138, 43, 0.14);
+  --status-confirmed: #5b8c5a;
+  --status-confirmed-bg: rgba(91, 140, 90, 0.14);
+  --status-completed: #8c6fa8;
+  --status-completed-bg: rgba(140, 111, 168, 0.14);
+  --status-canceled: #b2503f;
+  --status-canceled-bg: rgba(178, 80, 63, 0.14);
+
+  --destructive: #b2503f;
+  --destructive-foreground: #f4f4f3;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-status-pending: var(--status-pending);
+  --color-status-pending-bg: var(--status-pending-bg);
+  --color-status-confirmed: var(--status-confirmed);
+  --color-status-confirmed-bg: var(--status-confirmed-bg);
+  --color-status-completed: var(--status-completed);
+  --color-status-completed-bg: var(--status-completed-bg);
+  --color-status-canceled: var(--status-canceled);
+  --color-status-canceled-bg: var(--status-canceled-bg);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --font-display: var(--font-fraunces);
+  --font-sans: var(--font-inter);
+
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+}
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  color-scheme: light;
+}
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 999px;
+}
